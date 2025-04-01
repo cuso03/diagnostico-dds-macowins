@@ -7,7 +7,6 @@ class Venta{
     method cantPrendas() = prendas.size()
    
 }
-
 class Fecha{
     const property dia
     const property mes 
