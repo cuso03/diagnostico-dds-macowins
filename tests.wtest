@@ -1,0 +1,60 @@
+import  prendas.*
+import ventas.*
+
+describe "Prendas"{
+
+test "Un pantalon nuevo vale 500 pesos"{
+    const pantalon = new Pantalon(estado= nuevo , precioBase = 500)
+    assert.equals(500, pantalon.precio())
+}
+
+test "Un saco en promoción vale 300 pesos menos"{
+    const promocion300 = new Promocion(valorADescontar = -300)
+    const saco = new Saco(estado = promocion300 , precioBase = 700)
+    assert.equals( 400 , saco.precio())
+}
+
+test "Una camisa en liquidacion vale la mitad"{
+    const liquidacion50 = new Liquidacion(descuento = 50)
+    const camisa = new Camisa(estado= liquidacion50 , precioBase=400)
+    assert.equals(200, camisa.precio())
+}
+}
+
+describe "Ventas y Dias"{
+//prendas
+    const pantalon = new Pantalon(estado= nuevo , precioBase = 500)
+    const camisa = new Camisa(estado = nuevo, precioBase = 650)
+    const saco = new Saco(estado = nuevo, precioBase = 700)
+    //elemetos para ventas
+    const hoy = new Fecha(dia = 1 , mes = 4, anio = 2025)
+    const ayer = new Fecha(dia = 30 , mes = 3 , anio =2025)
+    const masterCard = new Tarjeta(nroCuotas = 12, coeficiente = 21)
+    //ventas
+    const ventaCredito1 = new Venta(fecha = hoy, prendas = [pantalon, saco, camisa], medioDePago = masterCard)
+    const ventaEfectivo2 = new Venta(fecha = hoy, prendas= [pantalon, saco, camisa], medioDePago =efectivo ) 
+    const ventaDeAyer = new Venta(fecha = ayer, prendas = [pantalon, saco], medioDePago = efectivo)
+    const ventaEfectivo3 = new Venta(fecha= ayer, prendas = [camisa], medioDePago = masterCard)
+    const ventaCredito4 = new Venta(fecha = hoy, prendas= [saco], medioDePago = masterCard)
+
+test "La compra de un traje en 12 cuotas sale más caro que pagarlo en efectivo"{
+    assert.equals(true, ventaCredito1.total()> ventaEfectivo2.total())
+}
+
+test "todas las ventas que se hicieron en una jornada pertenecen a la misma"{
+    historialDeVentas.agregar(ventaCredito1)
+    historialDeVentas.agregar(ventaEfectivo2)
+    historialDeVentas.agregar(ventaDeAyer)
+    historialDeVentas.agregar(ventaEfectivo3)
+    historialDeVentas.agregar(ventaCredito4)
+    assert.equals(false,(historialDeVentas.ventasDelDia(hoy)).any({venta=> historialDeVentas.perteneceAlDia(ayer,venta)})) 
+}
+test "El total de ganancias del dia de ayer es de $2108.5"{
+    historialDeVentas.agregar(ventaCredito1)
+    historialDeVentas.agregar(ventaEfectivo2)
+    historialDeVentas.agregar(ventaDeAyer)
+    historialDeVentas.agregar(ventaEfectivo3)
+    historialDeVentas.agregar(ventaCredito4)
+    assert.equals(2108.5, historialDeVentas.gananciaDelDia(ayer)) 
+}
+}
