@@ -1,3 +1,4 @@
+import ventas.*
 class Prenda{
     var property estado
     const  precioBase
